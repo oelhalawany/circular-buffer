@@ -1,0 +1,27 @@
+# Ignore build and output directories
+/build/
+/out/
+bin/
+
+# Ignore object files, static libs, and executables
+*.o
+*.a
+*.out
+*.exe
+
+# VS Code settings folder
+.vscode/
+
+# OS-specific files
+.DS_Store    # macOS
+Thumbs.db    # Windows
+
+# CMake cache and build directories
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# IDEs and other editors
+.idea/       # JetBrains IDEs
+*.swp        # Vim temp files
