@@ -6,8 +6,9 @@ private:
         
     int* buffer_;
     int size_;
-    int writeIdx;
-    int readIdx;
+    int writeIdx_;
+    int readIdx_;
+    int elementsCount_;
 
 public:
 
