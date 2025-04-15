@@ -48,6 +48,21 @@ jobs:
       - name: Run Tests with Valgrind
         run: |
           cd build
-          valgrind --leak-check=full ./your_test_binary
+          
+          if [ -f runTests ]; then
+            echo "Running Valgrind on test suite..."
+            valgrind --leak-check=full --error-exitcode=1 ./runTests
+          else
+            echo "Test executable not found!"
+            exit 1
+          fi
+
+          if [ -f CircularBufferApp ]; then
+            echo "Running Valgrind on app executable..."
+            valgrind --leak-check=full --error-exitcode=1 ./CircularBufferApp
+          else
+            echo "App executable not found!"
+            exit 1
+          fi
 
 
