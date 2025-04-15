@@ -21,11 +21,8 @@ jobs:
       - name: Install Cppcheck
         run: sudo apt-get update && sudo apt-get install -y cppcheck
 
-      - name: Run Cppcheck on src
-        run: cppcheck --enable=all --inconclusive --std=c++17 src
-
-      - name: Run Cppcheck on include
-        run: cppcheck --enable=all --inconclusive --std=c++17 include
+      - name: Run Cppcheck on src and include
+        run: cppcheck --enable=all --inconclusive --std=c++17 src include
 
   # Job 2: Run Clang-Tidy
   clang-tidy:
@@ -39,11 +36,14 @@ jobs:
       - name: Install Clang and Clang-Tidy
         run: sudo apt-get update && sudo apt-get install -y clang clang-tidy
 
-      - name: Run Clang-Tidy on src
-        run: clang-tidy src/**/*.cpp -- -std=c++17
+      - name: Generate compile_commands.json
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 
-      - name: Run Clang-Tidy on include
-        run: clang-tidy include/**/*.h -- -std=c++17
+      - name: Run Clang-Tidy on src and include
+        run: clang-tidy src/**/*.cpp include/**/*.hpp -p build/ -- -std=c++17
 
   # Job 3: Run Valgrind
   valgrind:
@@ -67,4 +67,4 @@ jobs:
       - name: Run Valgrind on Executable
         run: |
           cd build
-          valgrind ./your_executable
+          valgrind ./CircularBufferApp
