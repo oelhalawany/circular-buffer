@@ -37,3 +37,32 @@ jobs:
         run: |
           cd build
           ctest --output-on-failure
+
+      # Step 4: Run Clang-Tidy
+      - name: Run Clang-Tidy
+        run: |
+          cd build
+          clang-tidy -p . ../src/*.cpp
+
+      # Step 5: Run Valgrind
+      - name: Run Tests with Valgrind
+        run: |
+          cd build
+          
+          if [ -f runTests ]; then
+            echo "Running Valgrind on test suite..."
+            valgrind --leak-check=full --error-exitcode=1 ./runTests
+          else
+            echo "Test executable not found!"
+            exit 1
+          fi
+
+          if [ -f CircularBufferApp ]; then
+            echo "Running Valgrind on app executable..."
+            valgrind --leak-check=full --error-exitcode=1 ./CircularBufferApp
+          else
+            echo "App executable not found!"
+            exit 1
+          fi
+
+

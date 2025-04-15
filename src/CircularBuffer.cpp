@@ -8,7 +8,7 @@ namespace circular_buffer{
     CircularBuffer::CircularBuffer(int size)
     {
         size_ = size;
-        buffer_ = new int[size_];
+        buffer_ = new int[size_](); // init all buffer elements to zero 
         writeIdx_ = 0;
         readIdx_ = 0;
         elementsCount_ = 0;
