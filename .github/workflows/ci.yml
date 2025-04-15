@@ -43,8 +43,15 @@ jobs:
           cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
           make
 
+      - name: Verify Build Directory Exists
+        run: |
+          if [ ! -d build ]; then
+            echo "Build directory does not exist. Ensure the build step was successful.";
+            exit 1;
+          fi
+
       - name: Upload Build Directory
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: build
           path: build/
