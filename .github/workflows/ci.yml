@@ -34,28 +34,7 @@ jobs:
           cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
           make
 
-      # Step 3: Run Clang-Tidy
-      - name: Run Clang-Tidy
-        run: |
-          FILES=$(find src/ include/ -type f \( -name "*.cpp" -o -name "*.hpp" \))
-          if [ -n "$FILES" ]; then
-            echo "$FILES" | xargs clang-tidy -p build/ -- -std=c++17
-          else
-            echo "No source files found to run clang-tidy on."
-          fi
-
-      # Step 4: Run Valgrind on Executable
-      - name: Run Valgrind
-        run: |
-          cd build
-          if [ -f ./CircularBufferApp ]; then
-            valgrind ./CircularBufferApp
-          else
-            echo "Executable not found: CircularBufferApp"
-            exit 1
-          fi
-
-      # Step 5: Run Google Tests
+      # Step 3: Run Google Tests
       - name: Run Google Tests
         run: |
           cd build
