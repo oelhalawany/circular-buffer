@@ -24,7 +24,7 @@ jobs:
       - name: Run Cppcheck on src and include
         run: cppcheck --enable=all --inconclusive --std=c++17 src include
 
-  # Job 2: Generate compile_commands.json
+  # Job 2: Build and generate compile_commands.json
   build:
     name: Generate Build Files
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
           fi
 
       - name: Upload Build Directory
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build
           path: build/
