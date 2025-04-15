@@ -1,0 +1,39 @@
+name: C++ CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ make cppcheck
+
+      # Step 3: Run static analysis with Cppcheck
+      - name: Run Static Analysis
+        run: cppcheck --enable=all --inconclusive --std=c++17 src
+
+      # Step 4: Configure CMake
+      - name: Configure CMake
+        run: cmake -S . -B build
+
+      # Step 5: Build the project
+      - name: Build
+        run: cmake --build build
+
+      # Step 6: Run tests
+      - name: Run Tests
+        run: ctest --test-dir build
