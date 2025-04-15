@@ -47,7 +47,7 @@ jobs:
   clang-tidy:
     name: Static Analysis with Clang-Tidy
     runs-on: ubuntu-latest
-    needs: build  # Clang-Tidy depends on build job
+    needs: build  # Ensure compile_commands.json is available
 
     steps:
       - name: Checkout Code
@@ -56,14 +56,21 @@ jobs:
       - name: Install Clang and Clang-Tidy
         run: sudo apt-get update && sudo apt-get install -y clang clang-tidy
 
+      - name: Generate compile_commands.json
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+
       - name: Run Clang-Tidy on src and include
-        run: clang-tidy src/**/*.cpp include/**/*.hpp -p build/ -- -std=c++17
+        run: |
+          find src/ include/ -name "*.cpp" -o -name "*.hpp" | xargs clang-tidy -p build/ -- -std=c++17
 
   # Job 4: Run Valgrind
   valgrind:
     name: Memory Analysis with Valgrind
     runs-on: ubuntu-latest
-    needs: build  # Valgrind depends on build job
+    needs: build  # Ensure the build job completes successfully
 
     steps:
       - name: Checkout Code
@@ -72,7 +79,7 @@ jobs:
       - name: Install Valgrind
         run: sudo apt-get update && sudo apt-get install -y valgrind
 
-      - name: Build the Project (Already Done in Build Job)
+      - name: Run Valgrind on Executable
         run: |
           cd build
           valgrind ./CircularBufferApp
