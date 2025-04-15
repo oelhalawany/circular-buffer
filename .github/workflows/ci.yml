@@ -9,31 +9,62 @@ on:
       - main
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  # Job 1: Run Cppcheck
+  cppcheck:
+    name: Static Analysis with Cppcheck
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Install dependencies
-      - name: Install Dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ make cppcheck
+      - name: Install Cppcheck
+        run: sudo apt-get update && sudo apt-get install -y cppcheck
 
-      # Step 3: Run static analysis with Cppcheck
-      - name: Run Static Analysis
+      - name: Run Cppcheck on src
         run: cppcheck --enable=all --inconclusive --std=c++17 src
 
-      # Step 4: Configure CMake
-      - name: Configure CMake
-        run: cmake -S . -B build
+      - name: Run Cppcheck on include
+        run: cppcheck --enable=all --inconclusive --std=c++17 include
 
-      # Step 5: Build the project
-      - name: Build
-        run: cmake --build build
+  # Job 2: Run Clang-Tidy
+  clang-tidy:
+    name: Static Analysis with Clang-Tidy
+    runs-on: ubuntu-latest
 
-      # Step 6: Run tests
-      - name: Run Tests
-        run: ctest --test-dir build
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Clang and Clang-Tidy
+        run: sudo apt-get update && sudo apt-get install -y clang clang-tidy
+
+      - name: Run Clang-Tidy on src
+        run: clang-tidy src/**/*.cpp -- -std=c++17
+
+      - name: Run Clang-Tidy on include
+        run: clang-tidy include/**/*.h -- -std=c++17
+
+  # Job 3: Run Valgrind
+  valgrind:
+    name: Memory Analysis with Valgrind
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Valgrind
+        run: sudo apt-get update && sudo apt-get install -y valgrind
+
+      - name: Build the Project
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make
+
+      - name: Run Valgrind on Executable
+        run: |
+          cd build
+          valgrind ./your_executable
