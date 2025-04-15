@@ -44,3 +44,10 @@ jobs:
           cd build
           clang-tidy -p . ../src/*.cpp
 
+      # Step 5: Run Valgrind
+      - name: Run Tests with Valgrind
+        run: |
+          cd build
+          valgrind --leak-check=full ./your_test_binary
+
+
