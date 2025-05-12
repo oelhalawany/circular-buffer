@@ -1,0 +1,68 @@
+name: C++ CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cpp-workflow:
+    name: C++ CI/CD Workflow
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake make cppcheck clang clang-tidy valgrind
+      # Step 1: Run Cppcheck
+      - name: Run Cppcheck on src and include
+        run: cppcheck --enable=all --inconclusive --std=c++17 src include
+
+      # Step 2: Build the Project
+      - name: Build Project
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+          make
+      # Step 3: Run Google Tests
+      - name: Run Google Tests
+        run: |
+          cd build
+          ctest --output-on-failure
+
+      # Step 4: Run Clang-Tidy
+      - name: Run Clang-Tidy
+        run: |
+          cd build
+          clang-tidy -p . ../src/*.cpp
+
+      # Step 5: Run Valgrind
+      - name: Run Tests with Valgrind
+        run: |
+          cd build
+          
+          if [ -f runTests ]; then
+            echo "Running Valgrind on test suite..."
+            valgrind --leak-check=full --error-exitcode=1 ./runTests
+          else
+            echo "Test executable not found!"
+            exit 1
+          fi
+
+          if [ -f CircularBufferApp ]; then
+            echo "Running Valgrind on app executable..."
+            valgrind --leak-check=full --error-exitcode=1 ./CircularBufferApp
+          else
+            echo "App executable not found!"
+            exit 1
+          fi
+
+
