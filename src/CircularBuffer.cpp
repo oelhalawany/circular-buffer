@@ -15,6 +15,17 @@ namespace circular_buffer{
         cout<<"Buffer created with size "<<size_<<endl;
     }
 
+    CircularBuffer::CircularBuffer(int size, bool overwriteAllowed)
+    {
+        size_ = size;
+        buffer_ = new int[size_];
+        writeIdx_ = 0;
+        readIdx_ = 0;
+        elementsCount_ = 0;
+        overwriteAllowed_ = overwriteAllowed;
+        cout<<"Buffer created with size "<<size_<<endl;
+    }
+
     CircularBuffer::~CircularBuffer()
     {
         delete[] buffer_;
@@ -32,10 +43,17 @@ namespace circular_buffer{
 
     void CircularBuffer::push(int value)
     {
-        if(elementsCount_>=size_)
+        if(!isOverwriteAllowed() && elementsCount_>=size_)
         {
             cout<<"Buffer is full!"<<endl;
             return;
+        }
+
+        if(isFull() && isOverwriteAllowed())
+        {
+            cout<<"Buffer is full! Overwriting the oldest element."<<endl;
+            readIdx_ = (readIdx_+1) % size_;
+            elementsCount_--;
         }
 
         buffer_[writeIdx_] = value;
@@ -43,12 +61,12 @@ namespace circular_buffer{
         elementsCount_++;
     }
 
-    int CircularBuffer::pop()
+    std::optional<int> CircularBuffer::pop()
     {
         if(elementsCount_ == 0)
         {
             cout<<"Buffer is empty!"<<endl;
-            return -1;
+            return std::nullopt;
         }
 
         int ret = buffer_[readIdx_];
