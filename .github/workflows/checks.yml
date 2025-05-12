@@ -51,7 +51,7 @@ jobs:
           
           if [ -f runTests ]; then
             echo "Running Valgrind on test suite..."
-            valgrind --leak-check=full --error-exitcode=1 ./runTests
+            valgrind --leak-check=full --error-exitcode=1 -s ./runTests
           else
             echo "Test executable not found!"
             exit 1
@@ -59,7 +59,7 @@ jobs:
 
           if [ -f CircularBufferApp ]; then
             echo "Running Valgrind on app executable..."
-            valgrind --leak-check=full --error-exitcode=1 ./CircularBufferApp
+            valgrind --leak-check=full --error-exitcode=1 -s ./CircularBufferApp
           else
             echo "App executable not found!"
             exit 1
