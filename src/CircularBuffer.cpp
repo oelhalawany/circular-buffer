@@ -12,6 +12,7 @@ namespace circular_buffer{
         writeIdx_ = 0;
         readIdx_ = 0;
         elementsCount_ = 0;
+        overwriteAllowed_ = false;
         cout<<"Buffer created with size "<<size_<<endl;
     }
 
